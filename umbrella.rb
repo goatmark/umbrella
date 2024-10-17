@@ -2,10 +2,16 @@
 require "http"
 require "json"
 require "dotenv/load"
+require "ascii_charts"
 
 # Credentials
 pirate_weather_api_key = ENV.fetch("PIRATE_WEATHER_KEY")
 googlemaps_api_key = ENV.fetch("GMAPS_KEY")
+
+pp "========================================"
+pp "    Will you need an umbrella today?    "
+pp "========================================"
+
 
 pp "Hello, fellow human being. Please enter your current location."
 
@@ -47,9 +53,11 @@ N = 12
 n = 0
 
 hourly_chance_of_rain = Array.new
+hourly_chance_of_rain_pairs = Array.new
 
 while n < N do
   hourly_chance_of_rain = pirates_parsed.fetch("hourly").fetch("data")[n].fetch("precipProbability")
+  hourly_chance_of_rain_pairs = [n, pirates_parsed.fetch("hourly").fetch("data")[n].fetch("precipProbability")]
   # if n == 6
   #   hourly_chance_of_rain = 0.75
   # end
@@ -63,3 +71,6 @@ while n < N do
     pp "It looks like you don't need an umbrella."
   end
 end
+
+#puts AsciiCharts::Cartesian.new(hourly_chance_of_rain_pairs, :bar => true, :hide_zero => true).draw
+puts AsciiCharts::Cartesian.new([[0, 1], [1, 3], [2, 7], [3, 15], [4, 4]], :bar => true, :hide_zero => true).draw
