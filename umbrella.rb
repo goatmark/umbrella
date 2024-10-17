@@ -8,12 +8,12 @@ require "ascii_charts"
 pirate_weather_api_key = ENV.fetch("PIRATE_WEATHER_KEY")
 googlemaps_api_key = ENV.fetch("GMAPS_KEY")
 
-pp "========================================"
-pp "    Will you need an umbrella today?    "
-pp "========================================"
+puts "========================================"
+puts "    Will you need an umbrella today?    "
+puts "========================================"
 
 
-pp "Hello, fellow human being. Please enter your current location."
+puts "Hello, fellow human being. Please enter your current location."
 
 user_location = gets.chomp
 
@@ -47,7 +47,7 @@ rain_chance_hour1 = pirates_parsed.fetch("hourly").fetch("data")[1].fetch("preci
   # i should correlate with how many hours from now you want
   # time is in UTC
 
-pp "The weather is #{summary_current} today in #{user_location} with temperature of #{temperature_current} and a #{rain_chance_current*100}\% chance of rain. Next hour, the temperature will change to #{temperature_hour1} with a #{rain_chance_hour1*100}\% chance of rain."
+puts "The weather is #{summary_current} today in #{user_location} with temperature of #{temperature_current} and a #{rain_chance_current*100}\% chance of rain. Next hour, the temperature will change to #{temperature_hour1} with a #{rain_chance_hour1*100}\% chance of rain."
 
 N = 12
 n = 0
@@ -57,20 +57,20 @@ hourly_chance_of_rain_pairs = Array.new
 
 while n < N do
   hourly_chance_of_rain = pirates_parsed.fetch("hourly").fetch("data")[n].fetch("precipProbability")
-  hourly_chance_of_rain_pairs = [n, pirates_parsed.fetch("hourly").fetch("data")[n].fetch("precipProbability")]
-  # if n == 6
-  #   hourly_chance_of_rain = 0.75
-  # end
+  hourly_chance_of_rain_pairs[n] = [n, 100 * pirates_parsed.fetch("hourly").fetch("data")[n].fetch("precipProbability")]
+  if n == 9
+     hourly_chance_of_rain = 0.75
+     hourly_chance_of_rain_pairs[n] = [n, 100 * hourly_chance_of_rain]
+  end
   if hourly_chance_of_rain >= 0.10
-    pp "You might want to carry an umbrella today!"
-    pp "There is a #{hourly_chance_of_rain*100}\% chance of rain in #{n} hours."
+    puts "You might want to carry an umbrella today!"
+    puts "There is a #{hourly_chance_of_rain*100}\% chance of rain in #{n} hours."
     break
   end
   n += 1
   if n == N
-    pp "It looks like you don't need an umbrella."
+    puts "It looks like you don't need an umbrella. :cartwheel:"
   end
 end
 
-#puts AsciiCharts::Cartesian.new(hourly_chance_of_rain_pairs, :bar => true, :hide_zero => true).draw
-puts AsciiCharts::Cartesian.new([[0, 1], [1, 3], [2, 7], [3, 15], [4, 4]], :bar => true, :hide_zero => true).draw
+puts AsciiCharts::Cartesian.new(hourly_chance_of_rain_pairs, :bar => true, :hide_zero => false).draw # does not work
